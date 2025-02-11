@@ -20,46 +20,64 @@ print("words ", word_list)
 # capitalized and a 1-digit number appended.
 # first character 
 
-numbers = [0,1,2,3,4,5,6,7,8,9]
-def cap_digit_append(words):
-    for i in range(0, len(words)):
-        if len(words[i]) == 6 and words[i][0].isalpha():
-            words[i] = words[i].capitalize()
-            words[i] += str(random.choice(numbers))
-    return words
+numbers = '123456789'
+
+def cap_digit_append(word):
+    all_words = []
+    all_words.append(word.capitalize())
+    if len(word) == 6 and word[0].isalpha():
+        word = word.capitalize()
+        allCombinations = []
+        for combination in combinations(numbers, 1):
+            allCombinations.append("".join(combination))
+        for comb in allCombinations:
+            all_words.append(word+comb)
+    return all_words
 
 # A eight-character password from the rockyou wordlist with at least one of the
 # following special characters in the beginning: *, ~, !, #
 # add these permutations until it reaches 8
 
 special = '*~!#'
-def special_start_combo(words):
-    for i in range(0, len(words)):
-        if len(words[i]) < 8:
-            allCombinations = []
-            r = 8 - len(words[i])
-            for combination in combinations(special, r):
-                allCombinations.append("".join(combination))
-            
-            for comb in allCombinations:
-                words.append(comb+words[i])
-    return words
+def special_start_combo(word):
+    all_words =[]
+    if len(word) < 8:
+        allCombinations = []
+        r = 8 - len(word)
+        for combination in combinations(special, r):
+            allCombinations.append("".join(combination))
+        
+        for comb in allCombinations:
+            all_words.append(comb+word)
+    return all_words
 
 # A five-character password from the rockyou wordlist with the letter 'a' in it which gets
 # replaced with the special character @ and the character ‘l’ is substituted by the number
 # ‘1’.
 
-def replace_size_five(words):
-    for i in range(0, len(words)):
-        if len(words[i]) == 5:
-            words[i] = words[i].replace('a', '@')
-            words[i] = words[i].replace('l', '1')
-    return words
+def replace_size_five(word):
+    if len(word) == 5:
+        word = word.replace('a', '@')
+        word = word.replace('l', '1')
+    return word
 
 # Any password that is made with only digits and up to 6 digits length.
 # permutate with passwords from 1 - 6 length of any number combinations 
-# Any single password from the rockyou wordlist.
+def number_combos(nums):
+    allCombinations = []
+    for r in range(1, 7):
+        for combination in combinations(nums, r):
+            allCombinations.append("".join(combination))
+    return allCombinations
 
-word_list = cap_digit_append(word_list)
-word_list = special_start_combo(word_list)
+# Any single password from the rockyou wordlist.
+def process_words(words):
+    for i in range(0, len(words)):
+        words[i] = replace_size_five(words[i])
+        words += cap_digit_append(words[i])
+        words += special_start_combo(words[i])
+    words += number_combos(numbers)
+    return words
+
+word_list = process_words(word_list)
 print( "new word list ", word_list)
