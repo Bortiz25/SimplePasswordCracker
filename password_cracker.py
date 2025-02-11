@@ -1,5 +1,5 @@
-import random
 from itertools import combinations
+from hashlib import sha256
 hash_list = []
 
 # processing hash values
@@ -73,11 +73,28 @@ def number_combos(nums):
 # Any single password from the rockyou wordlist.
 def process_words(words):
     for i in range(0, len(words)):
-        words[i] = replace_size_five(words[i])
+        words.append(replace_size_five(words[i]))
         words += cap_digit_append(words[i])
         words += special_start_combo(words[i])
     words += number_combos(numbers)
     return words
 
+password_hash_map = {}
+def create_hash_set(words, hash_map):
+    for i in range(0, len(words)):
+        encode_string = words[i].encode('utf-8')
+        key = sha256(encode_string).hexdigest()
+        hash_map[key] = words[i]
+
+def check_passwords(pass_hash, map):
+    for i in range(0, len(pass_hash)):
+        if(i in map):
+            return print("Password found ", map[i])
+        else: 
+            print("No password found")
+
 word_list = process_words(word_list)
+create_hash_set(word_list, password_hash_map)
 print( "new word list ", word_list)
+print("hash map ", password_hash_map)
+check_passwords(hash_list, password_hash_map)
